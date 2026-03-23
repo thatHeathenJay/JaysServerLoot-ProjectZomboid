@@ -1,7 +1,7 @@
 JaysServerLoot = JaysServerLoot or {}
 
 -- How many extra rolls per zombie corpse (on top of vanilla loot)
-JaysServerLoot.ExtraRolls = 2
+JaysServerLoot.ExtraRolls = 1
 
 -- Define additional zombie loot as "Module.ItemID:chance" separated by semicolons
 -- Chance is 0.0 to 1.0 (e.g. 0.25 = 25% chance per roll)
@@ -19,4 +19,4 @@ JaysServerLoot.ExtraRolls = 2
 --   Base.Pills               Base.PillsAntiDep        Base.PillsBeta
 --   Base.Coins               Base.Money
 --
-JaysServerLoot.Items = "Base.CigarettePack:0.25;Base.CigaretteSingle:0.15;Base.LighterDisposable:0.10;Base.Matches:0.08"
+JaysServerLoot.Items = "Base.CigarettePack:0.20;Base.CigaretteSingle:0.15;Base.LighterDisposable:0.10;Base.Matches:0.08"
