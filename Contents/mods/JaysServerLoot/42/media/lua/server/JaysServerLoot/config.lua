@@ -1,15 +1,17 @@
 JaysServerLoot = JaysServerLoot or {}
 
--- How many extra rolls per zombie corpse (on top of vanilla loot)
-JaysServerLoot.ExtraRolls = 1
-
--- Define additional zombie loot as "Module.ItemID:chance" separated by semicolons
--- Chance is 0.0 to 1.0 (e.g. 0.25 = 25% chance per roll)
--- These are ADDED to vanilla loot, never replacing it
+-- Modify zombie loot weights using "Module.ItemID:weight" separated by semicolons
+-- Weight is relative to other items in the table (same scale as vanilla)
+-- Higher weight = more common. For reference, vanilla values:
+--   CigarettePack = 0.1, LighterDisposable = 0.5, Matches = 0.5
+--   Wallet_Male = 50, IDcard_Male = 20, Comb = 1
+--
+-- If an item already exists in the table, its weight is overwritten.
+-- If it doesn't exist, it's added.
 --
 -- Examples:
---   "Base.CigarettePack:0.25"                     (single item)
---   "Base.CigarettePack:0.25;Base.Matches:0.10"   (multiple items)
+--   "Base.CigarettePack:2"                          (make packs 20x more common)
+--   "Base.CigarettePack:2;Base.LighterDisposable:1" (multiple items)
 --
 -- Common item IDs:
 --   Base.CigarettePack       Base.CigaretteSingle     Base.CigaretteRolled
@@ -19,4 +21,4 @@ JaysServerLoot.ExtraRolls = 1
 --   Base.Pills               Base.PillsAntiDep        Base.PillsBeta
 --   Base.Coins               Base.Money
 --
-JaysServerLoot.Items = "Base.CigarettePack:0.20;Base.CigaretteSingle:0.15;Base.LighterDisposable:0.10;Base.Matches:0.08"
+JaysServerLoot.Items = "Base.CigarettePack:2;Base.CigaretteSingle:1;Base.LighterDisposable:1;Base.Matches:0.8"
