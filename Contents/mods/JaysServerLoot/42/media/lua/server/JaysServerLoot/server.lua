@@ -1,0 +1,67 @@
+require "JaysServerLoot/config"
+
+local parsedItems = {}
+local initialized = false
+
+local function parseItemString(str)
+    local items = {}
+    if not str or str == "" then return items end
+
+    for entry in str:gmatch("[^;]+") do
+        entry = entry:match("^%s*(.-)%s*$") -- trim whitespace
+        local itemID, chanceStr = entry:match("^(.+):([%d%.]+)$")
+        if itemID and chanceStr then
+            itemID = itemID:match("^%s*(.-)%s*$") -- trim item ID
+            local chance = tonumber(chanceStr)
+            if chance and chance > 0 and chance <= 1.0 then
+                local scriptItem = ScriptManager.instance:getItem(itemID)
+                if scriptItem then
+                    table.insert(items, { id = itemID, chance = chance })
+                    print("[JaysServerLoot] Registered: " .. itemID .. " at " .. (chance * 100) .. "% per roll")
+                else
+                    print("[JaysServerLoot] WARNING: Item '" .. itemID .. "' not found in game. Skipping.")
+                end
+            else
+                print("[JaysServerLoot] WARNING: Invalid chance '" .. tostring(chanceStr) .. "' for '" .. tostring(itemID) .. "'. Must be 0.0-1.0. Skipping.")
+            end
+        else
+            if entry ~= "" then
+                print("[JaysServerLoot] WARNING: Could not parse entry '" .. entry .. "'. Expected format: Module.ItemID:chance")
+            end
+        end
+    end
+
+    return items
+end
+
+local function onZombieDead(zombie)
+    if not initialized or #parsedItems == 0 then return end
+
+    local body = zombie:getInventory()
+    if not body then return end
+
+    local rolls = JaysServerLoot.ExtraRolls or 1
+    for roll = 1, rolls do
+        for _, item in ipairs(parsedItems) do
+            if ZombRand(10000) < (item.chance * 10000) then
+                local ok, err = pcall(function()
+                    body:AddItem(item.id)
+                end)
+                if not ok then
+                    print("[JaysServerLoot] WARNING: Failed to add '" .. item.id .. "': " .. tostring(err))
+                end
+            end
+        end
+    end
+end
+
+local function onGameStart()
+    parsedItems = parseItemString(JaysServerLoot.Items)
+    initialized = true
+
+    local rolls = JaysServerLoot.ExtraRolls or 1
+    print("[JaysServerLoot] Initialized with " .. #parsedItems .. " item(s), " .. rolls .. " extra roll(s) per zombie")
+end
+
+Events.OnGameStart.Add(onGameStart)
+Events.OnZombieDead.Add(onZombieDead)

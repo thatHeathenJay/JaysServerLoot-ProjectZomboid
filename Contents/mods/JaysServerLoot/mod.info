@@ -1,0 +1,7 @@
+id=JaysServerLoot
+name=JaysServerLoot
+author=ThatHeathenJay
+description=Server-side additional zombie loot rolls. Configure items and chances in config.lua. Purely additive - never replaces vanilla loot. No client install required.
+poster=poster.png
+tags=Build 42;Multiplayer
+versionMin=42.0
