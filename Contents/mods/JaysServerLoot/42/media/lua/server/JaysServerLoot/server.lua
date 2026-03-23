@@ -8,14 +8,16 @@ local function parseItemString(str)
     if not str or str == "" then return items end
 
     for entry in str:gmatch("[^;]+") do
-        entry = entry:match("^%s*(.-)%s*$") -- trim whitespace
+        entry = entry:match("^%s*(.-)%s*$")
         local itemID, chanceStr = entry:match("^(.+):([%d%.]+)$")
         if itemID and chanceStr then
-            itemID = itemID:match("^%s*(.-)%s*$") -- trim item ID
+            itemID = itemID:match("^%s*(.-)%s*$")
             local chance = tonumber(chanceStr)
             if chance and chance > 0 and chance <= 1.0 then
-                local scriptItem = ScriptManager.instance:getItem(itemID)
-                if scriptItem then
+                local ok, scriptItem = pcall(function()
+                    return ScriptManager.instance:getItem(itemID)
+                end)
+                if ok and scriptItem then
                     table.insert(items, { id = itemID, chance = chance })
                     print("[JaysServerLoot] Registered: " .. itemID .. " at " .. (chance * 100) .. "% per roll")
                 else
@@ -37,17 +39,17 @@ end
 local function onZombieDead(zombie)
     if not initialized or #parsedItems == 0 then return end
 
-    local body = zombie:getInventory()
-    if not body then return end
+    local ok, body = pcall(function() return zombie:getInventory() end)
+    if not ok or not body then return end
 
     local rolls = JaysServerLoot.ExtraRolls or 1
     for roll = 1, rolls do
         for _, item in ipairs(parsedItems) do
             if ZombRand(10000) < (item.chance * 10000) then
-                local ok, err = pcall(function()
+                local addOk, err = pcall(function()
                     body:AddItem(item.id)
                 end)
-                if not ok then
+                if not addOk then
                     print("[JaysServerLoot] WARNING: Failed to add '" .. item.id .. "': " .. tostring(err))
                 end
             end
@@ -56,11 +58,17 @@ local function onZombieDead(zombie)
 end
 
 local function onGameStart()
-    parsedItems = parseItemString(JaysServerLoot.Items)
-    initialized = true
+    local ok, err = pcall(function()
+        parsedItems = parseItemString(JaysServerLoot.Items)
+        initialized = true
 
-    local rolls = JaysServerLoot.ExtraRolls or 1
-    print("[JaysServerLoot] Initialized with " .. #parsedItems .. " item(s), " .. rolls .. " extra roll(s) per zombie")
+        local rolls = JaysServerLoot.ExtraRolls or 1
+        print("[JaysServerLoot] Initialized with " .. #parsedItems .. " item(s), " .. rolls .. " extra roll(s) per zombie")
+    end)
+    if not ok then
+        print("[JaysServerLoot] ERROR: Failed to initialize: " .. tostring(err))
+        initialized = false
+    end
 end
 
 Events.OnGameStart.Add(onGameStart)
