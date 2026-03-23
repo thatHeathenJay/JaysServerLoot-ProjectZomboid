@@ -87,6 +87,18 @@ On server start, every item ID is checked against PZ's item registry. Invalid it
 
 ## Changelog
 
+### v1.4 — Default Config Tuning
+- Changed default ExtraRolls from 2 to 1 (prevents duplicate items per zombie)
+- Changed default CigarettePack chance from 25% to 20%
+- More realistic era-appropriate loot distribution
+
+### v1.3 — Deferred Loot Sync
+- Fixed phantom items that couldn't be grabbed by players
+- Root cause: sendAddItemToContainer fails when zombie's grid square is null during OnZombieDead
+- Items now check for valid grid square before syncing to clients
+- If square isn't ready, loot is deferred to a pending queue and retried each tick (up to 30 attempts)
+- Loot rolls are determined immediately so timing doesn't affect drop results
+
 ### v1.2 — Drainable Item Fix
 - Fixed drainable items (CigarettePack, LighterDisposable, etc.) spawning empty/unusable
 - Drainable items now spawn 20-100% full for realism (partially used packs)
