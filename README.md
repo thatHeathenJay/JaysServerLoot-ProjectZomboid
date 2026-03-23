@@ -83,3 +83,18 @@ On server start, every item ID is checked against PZ's item registry. Invalid it
 - Works alongside any other mod — no distribution table conflicts
 - Does not modify vanilla loot tables
 - Server-only — no client mod mismatch possible
+- Safe to add or remove at any time
+
+## Changelog
+
+### v1.1 — Hardened
+- Wrapped all Java boundary calls in pcall (zombie:getInventory, ScriptManager, body:AddItem)
+- Wrapped onGameStart initialization in pcall with fallback
+- Mod cannot crash the server under any circumstance
+
+### v1.0 — Initial Release
+- Configurable extra loot rolls on zombie death
+- Semicolon-separated item:chance config format
+- Item validation against PZ's item registry on startup
+- Purely additive — never replaces vanilla loot
+- Server-only — no client install required
