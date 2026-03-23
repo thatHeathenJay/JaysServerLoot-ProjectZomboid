@@ -1,0 +1,28 @@
+Sandbox_EN = {
+    JaysServerLoot_CigarettePackWeight_name = "Cigarette Pack Weight",
+    JaysServerLoot_CigarettePackWeight_tooltip = "Distribution weight for cigarette packs on zombie corpses. Vanilla default is 0.1. Set to 0 to use vanilla value. | In plain terms: higher = more packs found on zombies. At 2.0, roughly as common as combs and pens.",
+
+    JaysServerLoot_CigaretteSingleWeight_name = "Loose Cigarette Weight",
+    JaysServerLoot_CigaretteSingleWeight_tooltip = "Distribution weight for loose cigarettes on zombie corpses. Not in vanilla zombie loot by default. Set to 0 to disable. | In plain terms: higher = more loose cigarettes. At 1.0, moderately common.",
+
+    JaysServerLoot_CigarilloWeight_name = "Cigarillo Weight",
+    JaysServerLoot_CigarilloWeight_tooltip = "Distribution weight for cigarillos on zombie corpses. Vanilla default is 0.1. Set to 0 to use vanilla value. | In plain terms: higher = more cigarillos found on zombies.",
+
+    JaysServerLoot_CigarWeight_name = "Cigar Weight",
+    JaysServerLoot_CigarWeight_tooltip = "Distribution weight for cigars on zombie corpses. Vanilla default is 0.01. Set to 0 to use vanilla value. | In plain terms: higher = more cigars found. They're rare in vanilla.",
+
+    JaysServerLoot_LighterWeight_name = "Disposable Lighter Weight",
+    JaysServerLoot_LighterWeight_tooltip = "Distribution weight for disposable lighters on zombie corpses. Vanilla default is 0.5. Set to 0 to use vanilla value. | In plain terms: higher = more lighters found on zombies.",
+
+    JaysServerLoot_MatchesWeight_name = "Matches Weight",
+    JaysServerLoot_MatchesWeight_tooltip = "Distribution weight for match boxes on zombie corpses. Vanilla default is 0.5. Set to 0 to use vanilla value. | In plain terms: higher = more match boxes found on zombies.",
+
+    JaysServerLoot_MoneyWeight_name = "Cash Weight",
+    JaysServerLoot_MoneyWeight_tooltip = "Distribution weight for cash on zombie corpses. Not in vanilla zombie loot by default. Set to 0 to disable (default). | In plain terms: set above 0 to add cash to zombie loot.",
+
+    JaysServerLoot_CoinsWeight_name = "Coins Weight",
+    JaysServerLoot_CoinsWeight_tooltip = "Distribution weight for coins on zombie corpses. Not in vanilla zombie loot by default. Set to 0 to disable (default). | In plain terms: set above 0 to add coins to zombie loot.",
+
+    JaysServerLoot_PillsWeight_name = "Pills Weight",
+    JaysServerLoot_PillsWeight_tooltip = "Distribution weight for generic pills on zombie corpses. Vanilla default is 0.1. Set to 0 to use vanilla value. | In plain terms: higher = more pills found on zombies.",
+}

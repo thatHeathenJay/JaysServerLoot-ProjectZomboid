@@ -3,6 +3,18 @@ require "Items/SuburbsDistributions"
 
 local initialized = false
 
+local sandboxItemMap = {
+    { option = "CigarettePackWeight",   item = "CigarettePack" },
+    { option = "CigaretteSingleWeight", item = "CigaretteSingle" },
+    { option = "CigarilloWeight",       item = "Cigarillo" },
+    { option = "CigarWeight",           item = "Cigar" },
+    { option = "LighterWeight",         item = "LighterDisposable" },
+    { option = "MatchesWeight",         item = "Matches" },
+    { option = "MoneyWeight",           item = "Money" },
+    { option = "CoinsWeight",           item = "Coins" },
+    { option = "PillsWeight",           item = "Pills" },
+}
+
 local function modifyDistribution(distTable, itemName, newWeight)
     if not distTable or not distTable.items then return false end
 
@@ -22,12 +34,36 @@ local function modifyDistribution(distTable, itemName, newWeight)
     return true
 end
 
-local function parseAndApply()
-    local str = JaysServerLoot.Items
-    if not str or str == "" then
-        print("[JaysServerLoot] WARNING: No items configured. Nothing to do.")
-        return
+local function applyToDistributions(shortName, weight)
+    local maleOk = pcall(modifyDistribution,
+        SuburbsDistributions["all"]["inventorymale"], shortName, weight)
+    local femaleOk = pcall(modifyDistribution,
+        SuburbsDistributions["all"]["inventoryfemale"], shortName, weight)
+    return maleOk or femaleOk
+end
+
+local function applySandboxOptions()
+    local sv = SandboxVars.JaysServerLoot
+    if not sv then
+        print("[JaysServerLoot] No sandbox vars found, skipping sandbox options")
+        return 0
     end
+
+    local count = 0
+    for _, entry in ipairs(sandboxItemMap) do
+        local weight = sv[entry.option]
+        if weight and weight > 0 then
+            if applyToDistributions(entry.item, weight) then
+                count = count + 1
+            end
+        end
+    end
+    return count
+end
+
+local function applyConfigFile()
+    local str = JaysServerLoot.Items
+    if not str or str == "" then return 0 end
 
     local count = 0
     for entry in str:gmatch("[^;]+") do
@@ -38,16 +74,8 @@ local function parseAndApply()
             local weight = tonumber(weightStr)
             if weight and weight > 0 then
                 local shortName = itemID:match("^Base%.(.+)$") or itemID
-
-                local maleOk = pcall(modifyDistribution,
-                    SuburbsDistributions["all"]["inventorymale"], shortName, weight)
-                local femaleOk = pcall(modifyDistribution,
-                    SuburbsDistributions["all"]["inventoryfemale"], shortName, weight)
-
-                if maleOk or femaleOk then
+                if applyToDistributions(shortName, weight) then
                     count = count + 1
-                else
-                    print("[JaysServerLoot] WARNING: Could not modify distributions for '" .. itemID .. "'")
                 end
             else
                 print("[JaysServerLoot] WARNING: Invalid weight '" .. tostring(weightStr) .. "' for '" .. tostring(itemID) .. "'. Skipping.")
@@ -58,14 +86,19 @@ local function parseAndApply()
             end
         end
     end
-
-    print("[JaysServerLoot] Initialized: modified " .. count .. " item(s) in zombie loot tables")
+    return count
 end
 
 local function onGameStart()
     if initialized then return end
 
-    local ok, err = pcall(parseAndApply)
+    local ok, err = pcall(function()
+        local sandboxCount = applySandboxOptions()
+        local configCount = applyConfigFile()
+        local total = sandboxCount + configCount
+        print("[JaysServerLoot] Initialized: " .. total .. " item(s) modified (" .. sandboxCount .. " from sandbox, " .. configCount .. " from config)")
+    end)
+
     if ok then
         initialized = true
     else

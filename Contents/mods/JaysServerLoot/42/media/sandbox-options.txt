@@ -1,0 +1,91 @@
+VERSION = 1,
+
+option JaysServerLoot.CigarettePackWeight
+{
+    type = double,
+    default = 2.0,
+    min = 0.0,
+    max = 50.0,
+    page = JaysServerLoot,
+    translation = JaysServerLoot_CigarettePackWeight,
+}
+
+option JaysServerLoot.CigaretteSingleWeight
+{
+    type = double,
+    default = 1.0,
+    min = 0.0,
+    max = 50.0,
+    page = JaysServerLoot,
+    translation = JaysServerLoot_CigaretteSingleWeight,
+}
+
+option JaysServerLoot.CigarilloWeight
+{
+    type = double,
+    default = 0.5,
+    min = 0.0,
+    max = 50.0,
+    page = JaysServerLoot,
+    translation = JaysServerLoot_CigarilloWeight,
+}
+
+option JaysServerLoot.CigarWeight
+{
+    type = double,
+    default = 0.1,
+    min = 0.0,
+    max = 50.0,
+    page = JaysServerLoot,
+    translation = JaysServerLoot_CigarWeight,
+}
+
+option JaysServerLoot.LighterWeight
+{
+    type = double,
+    default = 1.0,
+    min = 0.0,
+    max = 50.0,
+    page = JaysServerLoot,
+    translation = JaysServerLoot_LighterWeight,
+}
+
+option JaysServerLoot.MatchesWeight
+{
+    type = double,
+    default = 0.8,
+    min = 0.0,
+    max = 50.0,
+    page = JaysServerLoot,
+    translation = JaysServerLoot_MatchesWeight,
+}
+
+option JaysServerLoot.MoneyWeight
+{
+    type = double,
+    default = 0.0,
+    min = 0.0,
+    max = 50.0,
+    page = JaysServerLoot,
+    translation = JaysServerLoot_MoneyWeight,
+}
+
+option JaysServerLoot.CoinsWeight
+{
+    type = double,
+    default = 0.0,
+    min = 0.0,
+    max = 50.0,
+    page = JaysServerLoot,
+    translation = JaysServerLoot_CoinsWeight,
+}
+
+option JaysServerLoot.PillsWeight
+{
+    type = double,
+    default = 0.0,
+    min = 0.0,
+    max = 50.0,
+    page = JaysServerLoot,
+    translation = JaysServerLoot_PillsWeight,
+}
