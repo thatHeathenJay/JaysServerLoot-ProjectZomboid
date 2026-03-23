@@ -87,6 +87,13 @@ On server start, every item ID is checked against PZ's item registry. Invalid it
 
 ## Changelog
 
+### v1.5 — Sync Fix v2
+- Separated AddItem (always immediate) from sendAddItemToContainer (pcall-wrapped)
+- Items now exist server-side immediately, sync notification retried separately
+- Failed syncs queued and retried each tick up to 60 times
+- PZ naturally resyncs container contents when player opens corpse as fallback
+- No more server log errors from grid square null state
+
 ### v1.4 — Default Config Tuning
 - Changed default ExtraRolls from 2 to 1 (prevents duplicate items per zombie)
 - Changed default CigarettePack chance from 25% to 20%
