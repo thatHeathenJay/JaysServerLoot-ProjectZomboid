@@ -48,8 +48,11 @@ local function onZombieDead(zombie)
             if ZombRand(10000) < (item.chance * 10000) then
                 local addOk, err = pcall(function()
                     local added = body:AddItem(item.id)
-                    if added and added.setUsedDelta then
-                        added:setUsedDelta(ZombRandFloat(0.2, 1.0))
+                    if added then
+                        if added.setUsedDelta then
+                            added:setUsedDelta(ZombRandFloat(0.2, 1.0))
+                        end
+                        sendAddItemToContainer(body, added)
                     end
                 end)
                 if not addOk then
