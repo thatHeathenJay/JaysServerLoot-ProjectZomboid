@@ -87,6 +87,12 @@ On server start, every item ID is checked against PZ's item registry. Invalid it
 
 ## Changelog
 
+### v1.2 — Drainable Item Fix
+- Fixed drainable items (CigarettePack, LighterDisposable, etc.) spawning empty/unusable
+- Drainable items now spawn 20-100% full for realism (partially used packs)
+- Non-drainable items unaffected
+- Fixed initialization: use OnInitGlobalModData instead of OnGameStart (OnGameStart does not fire on dedicated servers)
+
 ### v1.1 — Hardened
 - Wrapped all Java boundary calls in pcall (zombie:getInventory, ScriptManager, body:AddItem)
 - Wrapped onGameStart initialization in pcall with fallback
