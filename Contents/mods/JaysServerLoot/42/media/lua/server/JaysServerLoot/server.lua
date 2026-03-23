@@ -2,6 +2,7 @@ require "JaysServerLoot/config"
 
 local parsedItems = {}
 local initialized = false
+local pendingLoot = {} -- deferred items waiting for valid grid square
 
 local function parseItemString(str)
     local items = {}
@@ -36,31 +37,80 @@ local function parseItemString(str)
     return items
 end
 
-local function onZombieDead(zombie)
-    if not initialized or #parsedItems == 0 then return end
-
-    local ok, body = pcall(function() return zombie:getInventory() end)
-    if not ok or not body then return end
-
+local function rollLoot()
+    local wonItems = {}
     local rolls = JaysServerLoot.ExtraRolls or 1
     for roll = 1, rolls do
         for _, item in ipairs(parsedItems) do
             if ZombRand(10000) < (item.chance * 10000) then
-                local addOk, err = pcall(function()
-                    local added = body:AddItem(item.id)
-                    if added then
-                        if added.setUsedDelta then
-                            added:setUsedDelta(ZombRandFloat(0.2, 1.0))
-                        end
-                        sendAddItemToContainer(body, added)
-                    end
-                end)
-                if not addOk then
-                    print("[JaysServerLoot] WARNING: Failed to add '" .. item.id .. "': " .. tostring(err))
-                end
+                table.insert(wonItems, item.id)
             end
         end
     end
+    return wonItems
+end
+
+local function addItemToBody(body, itemID)
+    local added = body:AddItem(itemID)
+    if added then
+        if added.setUsedDelta then
+            added:setUsedDelta(ZombRandFloat(0.2, 1.0))
+        end
+        sendAddItemToContainer(body, added)
+    end
+end
+
+local function tryAddPendingLoot(zombie, items)
+    local ok, body = pcall(function() return zombie:getInventory() end)
+    if not ok or not body then return false end
+
+    local okSq, square = pcall(function() return zombie:getSquare() end)
+    if not okSq or not square then return false end
+
+    for _, itemID in ipairs(items) do
+        local addOk, err = pcall(addItemToBody, body, itemID)
+        if not addOk then
+            print("[JaysServerLoot] WARNING: Failed to add '" .. itemID .. "': " .. tostring(err))
+        end
+    end
+    return true
+end
+
+local function onZombieDead(zombie)
+    if not initialized or #parsedItems == 0 then return end
+
+    local wonItems = rollLoot()
+    if #wonItems == 0 then return end
+
+    if not tryAddPendingLoot(zombie, wonItems) then
+        table.insert(pendingLoot, { zombie = zombie, items = wonItems, retries = 0 })
+    end
+end
+
+local function onTick()
+    if #pendingLoot == 0 then return end
+
+    local remaining = {}
+    for _, entry in ipairs(pendingLoot) do
+        local ok = pcall(function()
+            if tryAddPendingLoot(entry.zombie, entry.items) then
+                return
+            end
+            entry.retries = entry.retries + 1
+            if entry.retries < 30 then
+                table.insert(remaining, entry)
+            else
+                print("[JaysServerLoot] WARNING: Gave up adding loot after 30 retries")
+            end
+        end)
+        if not ok then
+            entry.retries = entry.retries + 1
+            if entry.retries < 30 then
+                table.insert(remaining, entry)
+            end
+        end
+    end
+    pendingLoot = remaining
 end
 
 local function onGameStart()
@@ -79,3 +129,4 @@ end
 
 Events.OnInitGlobalModData.Add(onGameStart)
 Events.OnZombieDead.Add(onZombieDead)
+Events.OnTick.Add(onTick)
