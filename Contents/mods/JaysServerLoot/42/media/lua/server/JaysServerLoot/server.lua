@@ -71,5 +71,5 @@ local function onGameStart()
     end
 end
 
-Events.OnGameStart.Add(onGameStart)
+Events.OnInitGlobalModData.Add(onGameStart)
 Events.OnZombieDead.Add(onZombieDead)
