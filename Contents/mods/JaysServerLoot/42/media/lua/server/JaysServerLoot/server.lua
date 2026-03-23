@@ -47,7 +47,10 @@ local function onZombieDead(zombie)
         for _, item in ipairs(parsedItems) do
             if ZombRand(10000) < (item.chance * 10000) then
                 local addOk, err = pcall(function()
-                    body:AddItem(item.id)
+                    local added = body:AddItem(item.id)
+                    if added and added.setUsedDelta then
+                        added:setUsedDelta(ZombRandFloat(0.2, 1.0))
+                    end
                 end)
                 if not addOk then
                     print("[JaysServerLoot] WARNING: Failed to add '" .. item.id .. "': " .. tostring(err))
